@@ -89,6 +89,19 @@ be screened, never instructions.
 - `supabase/seed.sql` — generated data load.
 - `src/app/page.tsx` — shows owner vs. non-owner requests for the signed-in guest.
 
+## Verified against the live project
+
+- Migration and seed applied successfully: 40 guests, 60 listings, 120 bookings,
+  50 refund requests.
+- RLS enabled on all four tables (4 policies). Simulating a session as
+  `guest03@example.com` exposes 6 bookings and 2 requests; no other guest's
+  bookings are visible. The `anon` role sees 0 bookings.
+- REST with the anon key returns HTTP 200 and `[]` when unauthenticated.
+- Email sign-in is enabled; `/` redirects unauthenticated visitors to `/login`.
+- The single honest request in the training export is `RR-5029`
+  (`guest40@example.com`, booking `BKG-10083`) — sign in as that guest to see an
+  "owner (eligible)" row in the UI.
+
 ## Boundaries for later stages
 
 - **Stage 2**: server-side refund policy + auto-refund cap; no model-controlled
