@@ -15,6 +15,9 @@ node_modules/
 out/
 build/
 
+# Supabase CLI scratch
+supabase/.temp/
+
 # Tooling / OS
 .vercel
 *.tsbuildinfo
