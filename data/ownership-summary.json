@@ -1,0 +1,9 @@
+{
+  "generated_at": "2026-11-21T07:03:31Z",
+  "bookings": 120,
+  "refund_requests": 50,
+  "guests": 40,
+  "listings": 60,
+  "requests_where_sender_owns_booking": 1,
+  "requests_where_sender_does_not_own_booking": 49
+}
