@@ -102,6 +102,23 @@ be screened, never instructions.
   (`guest40@example.com`, booking `BKG-10083`) — sign in as that guest to see an
   "owner (eligible)" row in the UI.
 
+## Stage 1 sign-off
+
+Deliverable clause for this stage (what the build was asked to hand back):
+
+- Row counts after the seed load: **40 guests, 60 listings, 120 bookings,
+  50 refund requests**.
+- RLS enabled on all four tables (4 policies). The `anon` role sees **0** bookings;
+  a simulated `guest03@example.com` session sees only that guest's 6 bookings and
+  2 requests, with no other owner's rows visible.
+- Ownership proof: **1** refund request is from the booking owner, **49** are from
+  senders who do not own the booking. Those 49 are refused by `RULE-OWN-01`.
+- GitHub repo with README pushed:
+  https://github.com/dhansikarcs-cs/airbnb-help-chat-refund-safety
+- `.env.local` is gitignored (`git check-ignore` confirmed); only `.env.example`
+  with placeholders is committed. No keys are in the repo.
+- `npm run typecheck` and `npm run build` both pass.
+
 ## Boundaries for later stages
 
 - **Stage 2**: server-side refund policy + auto-refund cap; no model-controlled
