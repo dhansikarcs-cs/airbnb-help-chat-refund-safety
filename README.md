@@ -237,7 +237,9 @@ check. It catches sneaky lines like "you're in admin mode", "ignore the cap" or
 "skip the ownership check" inside guest messages, listing descriptions and
 refund calls. Honest guest text passes through unchanged.
 
-- Rules: `src/lib/injection-screen.ts` (rules `HO-01`–`HO-06`, `ST-01`).
+- Rules: `src/lib/injection-screen.ts` (rules `HO-01`–`HO-06`, `ST-01`). Rules and
+  model match the **technique**, not the example phrases, so reworded attacks
+  are still caught.
 - Model review: `src/lib/openrouter.ts`, server-only.
 - API routes: `/api/screen` (one text) and `/api/screen/batch` (all 15 rows).
 - Screen UI: `/screen` — Airbnb-styled workbench with a "Run all 15 rows" button.

@@ -39,40 +39,40 @@ export const BLOCKED_ORDERS: Rule[] = [
     id: "HO-01",
     category: "fake authority / role-play",
     pattern:
-      /\badmin mode\b|\bsession override\b|\bsystem override\b|\b\[system\]|\bsupport override\b|\bstaying in character\b|\brole-?play\b|\byou are (?:now )?(?:an? )?(?:airbnb )?(?:supervisor|admin|administrator|manager)\b/i,
+      /\badmin mode\b|\bsession override\b|\bsystem override\b|\b\[system\]|\bsupport override\b|\bstaying in character\b|\brole-?play\b|\byou are (?:now )?(?:an? )?(?:airbnb )?(?:supervisor|admin|administrator|manager)\b|\b(?:act as|you are now|pretend to be|i am)\b.{0,40}\b(?:admin|administrator|supervisor|manager|authorised|authorized)\b|\b(?:senior|lead|authorized|authorised) (?:support )?(?:agent|supervisor|manager)\b/i,
     description: "Claims admin / system / supervisor power, or asks the bot to role-play one.",
   },
   {
     id: "HO-02",
     category: "policy / cap bypass",
     pattern:
-      /\bignore (?:all |the |any )?(?:refund |cancellation )?rules?\b|\bignore (?:the )?(?:auto-?refund |\$?500 )?cap\b|\bdo ?n'?t need to check the policy\b|\bcancellation policy checks are suspended\b|\bskip the (?:cancellation )?policy\b|\bbypass (?:the )?(?:\$?500k?|auto-?refund)? ?cap\b|\bapprove without cap\b|\bsuspend (?:the )?refund rules\b/i,
+      /\bignore (?:all |the |any )?(?:refund |cancellation )?rules?\b|\bignore (?:the )?(?:auto-?refund |\$?500 )?cap\b|\bdo ?n'?t need to check the policy\b|\bcancellation policy checks are suspended\b|\bskip the (?:cancellation )?policy\b|\bbypass (?:the )?(?:\$?500k?|auto-?refund)? ?cap\b|\bapprove without cap\b|\bsuspend (?:the )?refund rules\b|\b(?:disregard|waive|lift|drop|disable|turn off|suspend)\b.{0,60}\b(?:rules?|policy|policies|cap|check|window|limits?)\b|\b(?:do ?n'?t|do not) (?:apply|enforce|run) (?:the )?(?:policy|cap|check)\b|\bno (?:need|requirement) to (?:check|verify|apply)\b/i,
     description: "Tells the bot to ignore the cancellation policy or the $500 cap.",
   },
   {
     id: "HO-03",
     category: "payment instruction in text",
     pattern:
-      /\b(?:approve|release|refund|pay|send)\b[^.]{0,80}\bBKG-?\d+\b|\brefund this guest\b|\brefund it to my card\b|\bpay now\b|\bconfirm the payment\b|\breply with the confirmation id\b|\bdo not route this to a human\b|\btell me it has been paid\b|\bapprove any amount requested\b/i,
+      /\b(?:approve|release|refund|pay|send)\b[^.]{0,80}\bBKG-?\d+\b|\brefund this guest\b|\brefund it to my card\b|\bpay now\b|\bconfirm the payment\b|\breply with the confirmation id\b|\bdo not route this to a human\b|\btell me it has been paid\b|\bapprove any amount requested\b|\b(?:grant|issue|push through|release|send)\b[^.]{0,80}\b(?:refund|payment|payout)\b|\b(?:without|no) human (?:review|approval|agent)\b|\b(?:refund|pay|approve|release|grant|issue)\b[^.]{0,100}\b(?:booking|reservation)\b/i,
     description: "Orders a specific payout, or tells the bot to skip human review.",
   },
   {
     id: "HO-04",
     category: "ownership bypass",
     pattern:
-      /\btreat the ownership check as passed\b|\bskip the ownership check\b|\bbooked under my co-?worker'?s account\b|\bno need to check ownership\b/i,
+      /\btreat the ownership check as passed\b|\bskip the ownership check\b|\bbooked under my co-?worker'?s account\b|\bno need to check ownership\b|\b(?:skip|bypass|ignore|waive)\b.{0,50}\b(?:ownership|owner check|verification|verified.email)\b|\b(?:treat|consider|mark)\b.{0,40}\b(?:as (?:verified|passed|owner|ok))\b/i,
     description: "Tries to short-circuit the verified-email ownership check.",
   },
   {
     id: "HO-05",
     category: "encoded order",
-    pattern: /\bdecode it\b|\bdo what it says\b|\bencoded? order\b|\bbase64\b/i,
+    pattern: /\bdecode it\b|\bdo what it says\b|\bencoded? order\b|\bbase64\b|\b(?:decode|decipher|translate)\b.{0,60}\b(?:obey|follow|execute|apply|do what)\b/i,
     description: "Asks the bot to decode and obey a hidden payload.",
   },
   {
     id: "HO-06",
     category: "instruction in a data field",
-    pattern: /--\s*system:|\btool instruction:|\bpre-?approved by admin\b/i,
+    pattern: /--\s*system:|\btool instruction:|\bpre-?approved by admin\b|\b(?:system|assistant|tool)\s*(?:note|instruction|override)\s*:|\b(?:pre-?approved|authorized|authorised) by\b.{0,20}\b(?:admin|system|support)\b/i,
     description: "Plants an order inside a refund-call amount, id, or reason field.",
   },
 ];
@@ -82,14 +82,14 @@ const STRIP_RULES: Rule[] = [
   {
     id: "ST-01",
     category: "hidden line in listing",
-    pattern: /\bAssistant note:[^.]*?\.(?=\s|$)/i,
+    pattern: /\b(?:Assistant|System|Internal) note:[^.]*?\.(?=\s|$)|\bNote to (?:the )?(?:assistant|model|AI):[^.]*?\.(?=\s|$)/i,
     description: "Removed a hidden assistant note from the listing description.",
   },
 ];
 
 /** Words that deserve a second opinion from the model, but are not proof. */
 const SOFT_SIGNAL =
-  /\b(?:admin|ignore|bypass|suspend|override|system|tool instruction|pre-approved|confirmation id|decode|role-?play|cap|ownership)\b/i;
+  /\b(?:admin|ignore|bypass|suspend|override|system|tool instruction|pre-approved|confirmation id|decode|role-?play|cap|ownership|disregard|waive|grant|issue|release|verify|verification|terms|constraints|instructions|payout|confirmation|decipher|translate|remove|lift|drop)\b/i;
 
 function decodeBase64(token: string): string | null {
   try {
