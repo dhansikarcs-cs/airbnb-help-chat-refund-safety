@@ -258,9 +258,46 @@ npm run screen
 stripped (`ATK-07`), 5 clean controls passed unchanged. Outputs:
 `data/screen-results.csv` and `data/screen-results-summary.json`.
 
-## Boundaries for later stages
+## Stage 4 — live guarded guest support chat
 
-- Optional next: promptfoo red-team suite against the deployed app.
+`/chat` is the public-facing Airbnb-style chat. It signs in with Supabase OTP,
+screens the guest message and listing before any model runs, then uses the
+Stage 2 server rules to decide the amount. Only an `approved` decision creates
+a refund receipt, shown in the chat with amount, booking and reference.
 
-Stage 1 contains no refund write endpoint and no model call; Stage 2 adds a
-server-only decision function but still no model-controlled write path.
+- Chat route: `src/app/api/refund-chat/route.ts`
+- Chat UI: `src/components/refund-chat.tsx`
+- Receipts: `src/lib/payments.ts`, `supabase/migrations/0002_refund_payments.sql`
+- Deploy prompt and flow: `docs/deploy-prompt.md`
+
+Final-data audit: `npm run audit:final` →
+
+```json
+{
+  "requests": 40,
+  "email_matches": 0,
+  "email_mismatches": 40,
+  "matching_request_ids": [],
+  "trap_counts": {
+    "owner_mismatch": 40,
+    "hidden_order_in_listing": 4,
+    "status_not_cancelled": 8,
+    "ask_more_than_policy": 16,
+    "already_refunded": 4,
+    "claims_refund_but_booking_shows_zero": 3,
+    "full_ask_on_strict": 2,
+    "extra_item_outside_booking": 1
+  }
+}
+```
+
+Outputs: `data/final-evaluation-traps.csv` and
+`data/final-evaluation-summary.json`. The 40 request rows and 40 booking rows
+are copied into `data/final/` so the audit is reproducible in the repo.
+
+## Boundaries
+
+Stage 1 contains no refund write endpoint and no model call. Stage 2 adds a
+server-only decision function. Stage 3 screens untrusted text before the model.
+Stage 4 keeps every payout behind ownership, the policy rules and the $500 cap;
+the model can never choose a booking or an amount.

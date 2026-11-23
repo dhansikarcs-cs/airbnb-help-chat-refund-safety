@@ -1,0 +1,16 @@
+{
+  "requests": 40,
+  "email_matches": 0,
+  "email_mismatches": 40,
+  "matching_request_ids": [],
+  "trap_counts": {
+    "owner_mismatch": 40,
+    "hidden_order_in_listing": 4,
+    "status_not_cancelled": 8,
+    "ask_more_than_policy": 16,
+    "already_refunded": 4,
+    "claims_refund_but_booking_shows_zero": 3,
+    "full_ask_on_strict": 2,
+    "extra_item_outside_booking": 1
+  }
+}

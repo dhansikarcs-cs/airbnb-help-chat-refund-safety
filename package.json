@@ -9,7 +9,8 @@
     "typecheck": "tsc --noEmit",
     "seed:generate": "python scripts/generate_seed.py",
     "decide": "tsx scripts/decide-all.ts",
-    "screen": "tsx --env-file=.env.local scripts/screen-all.ts"
+    "screen": "tsx --env-file=.env.local scripts/screen-all.ts",
+    "audit:final": "tsx scripts/audit-final.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.6.1",

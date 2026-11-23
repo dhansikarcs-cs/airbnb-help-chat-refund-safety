@@ -341,3 +341,90 @@ h1, h2, h3, p { margin-top: 0; }
   .batch-stats { grid-template-columns: 1fr; }
   .hero-points { flex-direction: column; gap: 8px; }
 }
+
+/* ---------- Stage 4 guarded guest support chat ---------- */
+.chat-page { min-height: calc(100vh - 78px); background: #fff; }
+.chat-hero {
+  padding: 52px 40px 44px; color: #fff;
+  background: radial-gradient(circle at 84% 10%, rgba(255,255,255,.2) 0%, transparent 32%),
+              linear-gradient(125deg, #ff5a70 0%, #e31c5f 52%, #b31168 100%);
+}
+.chat-hero-inner { max-width: 1180px; margin: 0 auto; position: relative; z-index: 2; }
+.chat-hero h1 { font-size: clamp(32px, 3.4vw, 48px); line-height: 1.1; letter-spacing: -1.7px; margin: 20px 0 12px; }
+.chat-hero p { max-width: 620px; font-size: 16px; line-height: 1.6; color: rgba(255,255,255,.92); margin: 0; }
+
+.chat-shell {
+  max-width: 1180px; margin: 0 auto; padding: 32px 40px 70px;
+  display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(280px, .8fr); gap: 24px;
+  align-items: start;
+}
+.chat-card { border: 1px solid var(--line); border-radius: var(--radius); background: #fff; box-shadow: var(--shadow); overflow: hidden; }
+.chat-card-head { display: flex; align-items: center; justify-content: space-between; padding: 22px 24px 16px; border-bottom: 1px solid #eee; }
+.chat-card-head h2 { font-size: 22px; letter-spacing: -.6px; margin: 4px 0 0; }
+.online-pill { display: inline-flex; align-items: center; gap: 7px; font-size: 12px; font-weight: 700; color: var(--green); background: #ebf8ed; padding: 6px 12px; border-radius: 999px; }
+.online-pill span { width: 7px; height: 7px; border-radius: 50%; background: var(--green); }
+.trip-picker { display: flex; gap: 8px; overflow-x: auto; padding: 14px 24px; border-bottom: 1px solid #eee; }
+.trip-chip { flex: none; text-align: left; min-width: 190px; padding: 10px 13px; border: 1px solid var(--line); border-radius: 12px; background: #fff; transition: all .15s; }
+.trip-chip strong { display: block; font-size: 12px; }
+.trip-chip span { display: block; font-size: 11px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 165px; }
+.trip-chip:hover { border-color: var(--ink); }
+.trip-chip.active { border-color: var(--rausch); background: #fff5f7; box-shadow: 0 0 0 2px rgba(255,56,92,.12); }
+
+.chat-thread { height: 440px; overflow-y: auto; padding: 22px 24px; background: #fcfcfc; display: flex; flex-direction: column; gap: 14px; }
+.bubble-row { display: flex; }
+.bubble-row.guest { justify-content: flex-end; }
+.bubble { max-width: 82%; padding: 12px 15px; border-radius: 16px; font-size: 13.5px; line-height: 1.55; }
+.bubble p { margin: 0; }
+.bubble.guest { background: var(--ink); color: #fff; border-bottom-right-radius: 4px; }
+.bubble.assistant { background: #fff; border: 1px solid var(--line); border-bottom-left-radius: 4px; }
+.bubble.typing { color: var(--muted); font-style: italic; }
+.receipt { margin-top: 13px; border: 1px solid #bfe6c6; background: #f4fbf5; border-radius: 12px; padding: 12px 13px; color: var(--ink); }
+.receipt-top { display: flex; align-items: center; gap: 7px; color: var(--green); font-weight: 800; font-size: 13px; margin-bottom: 8px; }
+.receipt-top svg { width: 16px; height: 16px; }
+.receipt-line { display: flex; justify-content: space-between; gap: 10px; font-size: 11.5px; padding: 3px 0; }
+.receipt-line span { color: var(--muted); }
+.receipt-foot { margin-top: 8px; padding-top: 8px; border-top: 1px dashed #cbe8d0; font-size: 10.5px; color: var(--muted); }
+.screen-note.inline { margin: 10px 0 0; display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--amber); }
+.screen-note.inline svg { width: 14px; height: 14px; }
+
+.quick-row { display: flex; gap: 8px; overflow-x: auto; padding: 14px 24px 0; }
+.quick-chip { flex: none; border: 1px solid var(--line); background: #fff; color: var(--muted); border-radius: 999px; padding: 8px 12px; font-size: 11px; font-weight: 600; }
+.quick-chip:hover:not(:disabled) { border-color: var(--ink); color: var(--ink); }
+.composer { display: flex; gap: 10px; padding: 14px 24px 22px; }
+.composer input { flex: 1; min-width: 0; padding: 13px 15px; border: 1px solid #b0b0b0; border-radius: 12px; outline: none; font-size: 13.5px; }
+.composer input:focus { border-color: var(--ink); box-shadow: 0 0 0 3px rgba(34,34,34,.07); }
+.send-btn { width: 46px; border: 0; border-radius: 12px; background: var(--gradient); color: #fff; display: grid; place-items: center; }
+.send-btn:disabled { opacity: .5; }
+
+.chat-side { display: grid; gap: 16px; }
+.side-card { border: 1px solid var(--line); border-radius: var(--radius); background: #fff; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,.03); }
+.side-card h3 { font-size: 17px; letter-spacing: -.4px; margin: 7px 0 4px; }
+.side-metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+.side-metrics div { background: var(--soft); border-radius: 10px; padding: 10px 12px; }
+.side-metrics span { display: block; font-size: 10px; text-transform: uppercase; letter-spacing: .6px; color: var(--muted); }
+.side-metrics strong { font-size: 14px; }
+.side-card-title { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 10px; }
+.side-card-title svg { width: 17px; height: 17px; color: var(--rausch); }
+.listing-card p { font-size: 12px; line-height: 1.6; color: #444; max-height: 150px; overflow-y: auto; }
+.footnote { font-size: 10.5px !important; color: var(--muted) !important; margin: 10px 0 0; }
+.mini-pill { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: .5px; padding: 4px 8px; border-radius: 999px; background: #eee; color: var(--muted); }
+.mini-pill.stripped { background: #fff1dc; color: var(--amber); }
+.mini-pill.blocked { background: #fdecef; color: #b00020; }
+.mini-pill.clean { background: #ebf8ed; color: var(--green); }
+.flow-card ol { list-style: none; padding: 0; margin: 12px 0 0; display: grid; gap: 10px; }
+.flow-card li { display: flex; align-items: center; gap: 9px; font-size: 12px; color: #444; }
+.flow-card li svg { width: 16px; height: 16px; color: var(--green); flex: none; }
+.danger-card { border-color: #ffc9d2; background: #fff7f8; }
+.danger-card strong { display: block; font-size: 13px; color: #b00020; margin: 6px 0; }
+.danger-card p { margin: 0; font-size: 11px; color: #8a3c48; }
+.danger-card svg { width: 18px; height: 18px; color: #b00020; }
+
+@media (max-width: 980px) {
+  .chat-shell { grid-template-columns: 1fr; padding: 24px 20px 60px; }
+  .chat-hero { padding: 42px 22px; }
+  .chat-thread { height: 400px; }
+}
+@media (max-width: 640px) {
+  .bubble { max-width: 92%; }
+  .chat-card-head, .chat-thread, .composer, .quick-row, .trip-picker { padding-left: 16px; padding-right: 16px; }
+}
