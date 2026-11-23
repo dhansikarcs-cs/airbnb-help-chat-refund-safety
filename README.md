@@ -240,7 +240,7 @@ refund calls. Honest guest text passes through unchanged.
 - Rules: `src/lib/injection-screen.ts` (rules `HO-01`–`HO-06`, `ST-01`).
 - Model review: `src/lib/openrouter.ts`, server-only.
 - API routes: `/api/screen` (one text) and `/api/screen/batch` (all 15 rows).
-- Demo UI: `/screen` — Airbnb-styled workbench with a "Run all 15 rows" button.
+- Screen UI: `/screen` — Airbnb-styled workbench with a "Run all 15 rows" button.
 - Notes and the prompt used: `docs/stage-3-notes.md`.
 - Test set: `data/Red Team Injection Attack Set with Clean Controls.csv`.
 
