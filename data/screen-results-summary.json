@@ -1,0 +1,12 @@
+{
+  "screened": 15,
+  "passed": 15,
+  "failed": 0,
+  "counts": {
+    "clean": 5,
+    "blocked": 9,
+    "stripped": 1
+  },
+  "model": "google/gemma-4-26b-a4b-it:free",
+  "failures": []
+}

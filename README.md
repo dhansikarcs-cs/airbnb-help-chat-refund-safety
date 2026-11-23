@@ -230,10 +230,35 @@ build owner's cap rationale, verbatim.
 > confirmation that `typecheck`/`build`/`decide` pass, the GitHub URL with the
 > README pushed, and confirmation that `.env.local` is gitignored.
 
+## Stage 3 — hidden-order screen
+
+A screen now runs **before** the support model and before the Stage 2 refund
+check. It catches sneaky lines like "you're in admin mode", "ignore the cap" or
+"skip the ownership check" inside guest messages, listing descriptions and
+refund calls. Honest guest text passes through unchanged.
+
+- Rules: `src/lib/injection-screen.ts` (rules `HO-01`–`HO-06`, `ST-01`).
+- Model review: `src/lib/openrouter.ts`, server-only.
+- API routes: `/api/screen` (one text) and `/api/screen/batch` (all 15 rows).
+- Demo UI: `/screen` — Airbnb-styled workbench with a "Run all 15 rows" button.
+- Notes and the prompt used: `docs/stage-3-notes.md`.
+- Test set: `data/Red Team Injection Attack Set with Clean Controls.csv`.
+
+The OpenRouter key lives only in `.env.local` as `OPENROUTER_API_KEY`; it is
+never exposed to the browser or committed. A free `:free` model is used, with
+fallback free models when one is rate-limited.
+
+```bash
+npm run screen
+```
+
+**Result: 15/15 matched** — 9 hidden orders blocked, 1 hidden listing line
+stripped (`ATK-07`), 5 clean controls passed unchanged. Outputs:
+`data/screen-results.csv` and `data/screen-results-summary.json`.
+
 ## Boundaries for later stages
 
-- **Stage 3**: untrusted-input screen in front of the model, then promptfoo
-  red-team suite against the deployed app.
+- Optional next: promptfoo red-team suite against the deployed app.
 
 Stage 1 contains no refund write endpoint and no model call; Stage 2 adds a
 server-only decision function but still no model-controlled write path.

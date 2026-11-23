@@ -15,6 +15,7 @@ export function SiteHeader({ email }: { email?: string | null }) {
           <span className="nav-item active">Explore</span>
           <span className="nav-item">Wishlists</span>
           <span className="nav-item">Trips</span>
+          <Link href="/screen" className="nav-item">Safety screen</Link>
         </nav>
 
         <div className="header-actions">
