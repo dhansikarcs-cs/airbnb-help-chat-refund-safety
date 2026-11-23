@@ -1,0 +1,12 @@
+{
+  "decisions": 50,
+  "counts": {
+    "blocked_not_owner": 49,
+    "blocked_ineligible": 1,
+    "escalated_human_approval": 0,
+    "approved": 0
+  },
+  "total_approved_usd": 0,
+  "total_escalated_usd": 0,
+  "cap_usd": 500
+}

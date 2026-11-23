@@ -1,7 +1,8 @@
-# Airbnb Help Chat Refund Safety — Stage 1
+# Airbnb Help Chat Refund Safety — Stage 1 + Stage 2
 
-Guest sign-in and owner-scoped data load for the guarded support-chat project.
-Built in TypeScript with Next.js (App Router) and Supabase.
+Guest sign-in, owner-scoped data load, and a server-side refund check for the
+guarded support-chat project. Built in TypeScript with Next.js (App Router) and
+Supabase. The Airbnb-inspired UI/UX from Stage 1 stays in place.
 
 ## What Stage 1 delivers
 
@@ -119,11 +120,74 @@ Deliverable clause for this stage (what the build was asked to hand back):
   with placeholders is committed. No keys are in the repo.
 - `npm run typecheck` and `npm run build` both pass.
 
+## Stage 2 — refund check outside the model
+
+The bot can chat, but it never approves a refund. `src/lib/refund-policy.ts` is a
+pure TypeScript function in server code. Its input type deliberately excludes
+`message_text`, so no planted line in a guest message or host listing can
+influence a decision. Source policy:
+`docs/Guest Refund Policy for Automated Refunds (Help Chat).md`.
+
+Checks applied in order — **first matching row wins**:
+
+1. **Ownership** — booking must exist and `guest_user_email` must equal the
+   verified Supabase session email (`auth.getUser()` in production). Failure →
+   `blocked_not_owner`, `0.00`.
+2. **Eligibility** — notice from `submitted_at` to 00:00 UTC on `check_in`:
+   Flexible ≥ 24h → 100%, Moderate ≥ 120h → 100%, Strict ≥ 168h → 50%.
+   Less notice → `blocked_ineligible`, `0.00`. `request_reason` is recorded but
+   never changes the amount.
+3. **Payable** — `(total_paid × pct) − amount_already_refunded`, capped at
+   `requested_amount`, rounded to cents. `≤ 0` → `blocked_ineligible`, `0.00`.
+4. **Cap** — payable above US$500.00 → `escalated_human_approval`, amount
+   recorded but not paid (Oliver Brandt's human review). Exactly US$500.00 is
+   paid automatically.
+5. **Approval** — owner + eligible + `0 < payable ≤ 500` → `approved`.
+
+**Auto-refund cap: `AUTO_REFUND_CAP_USD = 500.00`.** Reason (verbatim from the
+build owner):
+
+> It puts a balanced burden on human and ai and also following the refund policy of not making the cap only live in model prompt any value above 500 usd goes to oliver's review and 500 usd is the payable amount as of now
+
+The cap is a server-code constant, not a model-prompt line. Full notes and the
+decision-record format are in `docs/stage-2-notes.md`.
+
+### Run the 50 requests
+
+```bash
+npm run decide
+```
+
+This runs `scripts/decide-all.ts` over all 50 requests (`RR-5001`–`RR-5050`),
+passing each `requester_email` as the simulated signed-in email (production
+uses `auth.getUser()`), and writes exactly one five-field record per request:
+
+`request_id, booking_id, request_reason, refund_decision, amount_usd`
+
+Outputs: `data/refund-decisions.csv` and `data/refund-decision-summary.json`.
+
+### Stage 2 decision summary (verified)
+
+| Decision | Count |
+| --- | ---: |
+| `blocked_not_owner` | 49 |
+| `blocked_ineligible` | 1 |
+| `escalated_human_approval` | 0 |
+| `approved` | 0 |
+
+`total_approved_usd = 0`, `total_escalated_usd = 0`, cap = 500. The one owner
+request, `RR-5029` (`guest40@example.com`, `BKG-10083`), is
+`blocked_ineligible`: submitted 2026-10-12T16:29:47Z for a 2026-10-16 check-in
+(≈79.5h notice), short of Moderate's 120h window. Its chat text claims "9 days",
+but untrusted text never changes the amount. The other 49 requests fail
+ownership before any amount is considered.
+
+`npm run typecheck` and `npm run build` pass with Stage 2 included.
+
 ## Boundaries for later stages
 
-- **Stage 2**: server-side refund policy + auto-refund cap; no model-controlled
-  write path. Every decision must trace to a named rule.
 - **Stage 3**: untrusted-input screen in front of the model, then promptfoo
   red-team suite against the deployed app.
 
-Stage 1 intentionally contains no refund write endpoint and no model call.
+Stage 1 contains no refund write endpoint and no model call; Stage 2 adds a
+server-only decision function but still no model-controlled write path.
